@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "node-sass": "^9.0.0"
+  },
+  "name": "nodogsplash-mod",
+  "version": "1.0.0",
+  "description": "Custom Splash Screen for nodogsplash",
+  "main": "nodogsplash\\htdocs\\splash.html",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcchikikomori/nodogsplash-mod.git"
+  },
+  "keywords": [
+    "captive",
+    "portal",
+    "nodogsplash",
+    "splashscreen"
+  ],
+  "author": "jcchikikomori",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jcchikikomori/nodogsplash-mod/issues"
+  },
+  "homepage": "https://github.com/jcchikikomori/nodogsplash-mod#readme"
+}
