@@ -4,28 +4,64 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>$gatewayname Hotspot Gateway.</title>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-dark@0.9.3/css/bulma-dark.min.css" />
+	<title>Welcome to $gatewayname</title>
 	<link rel="stylesheet" type="text/css" href="/splash.css" />
 	<!-- Assuming you still have custom styles -->
 </head>
 
 <body>
-	<section class="section" >
-		<div class="container has-text-centered">
-			<h1 class="title">Welcome!</h1>
-			<img src="/images/splash.jpg" alt="Welcome" />
-			<p class="subtitle">
-				For access to the Internet, please tap or click Continue.
-			</p>
-			<form method="GET" action="$authaction">
-				<input type="hidden" name="tok" value="$tok" />
-				<input type="hidden" name="redir" value="$redir" />
-				<button class="button is-link is-fullwidth">Continue</button>
-			</form>
+	<section class="section">
+		<div class="container has-text-centered" style="max-width: 512px;">
+			<div class="box" data-theme="light">
+				<h1 class="title">Welcome!</h1><br />
+
+				<!-- <img src="/images/splash.jpg" alt="Welcome" /> -->
+
+				<p class="subtitle">
+					You are now entering onto the world of $gatewayname
+				</p>
+				<p class="subtitle">
+					For access to the Internet, please tap or click "Continue" to proceed.
+				</p><br />
+
+				<p class="notification has-text-danger">
+					<strong>Warning:</strong> Whoever shares the WiFi password WITHOUT PERMISSION, whether through QR
+					codes or using an app to leak it, is being monitored by the owner, who knows both your name and the
+					name of the device you're using.
+				</p><br />
+				<p class="notification has-text-danger">
+					<strong>BABALA:</strong> Ang sinumang magbahagi ng WiFi password NG WALANG PAHINTULOT, kahit sa
+					pamamagitan ng QR code o paggamit ng app para mag-leak, ay binabantayan ng may-ari, na alam ang
+					iyong pangalan at ang pangalan ng iyong ginagamit na device.
+				</p><br />
+
+				<form method="GET" action="$authaction">
+					<input type="hidden" name="tok" value="$tok" />
+					<input type="hidden" name="redir" value="$redir" />
+					<button type="submit" class="button is-link is-fullwidth">Continue</button>
+				</form>
+			</div>
 		</div>
 	</section>
+
+	<script type="text/javascript">
+		var elSubmits = document.querySelectorAll('.button');
+		for (var i = 0, l = elSubmits.length; i < l; i++) {
+			var elSubmit = elSubmits[i];
+			elSubmit.addEventListener('click', onclicksubmit);
+		}
+		function onclicksubmit(event) {
+			var elSubmit = event.currentTarget;
+			var classList = elSubmit.classList;
+			if (classList.contains('is-loading')) {
+				return;
+			}
+			classList.add('is-loading');
+			setTimeout(function () {
+				classList.remove('is-loading');
+			}, ~~(Math.random() * 8000));
+		}
+	</script>
 </body>
 
 </html>

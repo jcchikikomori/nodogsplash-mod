@@ -1,3 +1,5 @@
+// FOR DEVELOPMENT PURPOSES ONLY!
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -8,7 +10,11 @@ const server = http.createServer((req, res) => {
 
     if (url === '/') {
         filePath = path.join(__dirname, 'htdocs', 'splash.html');
-    } else {
+    }
+    else if (url === '/$authaction?tok=%24tok&redir=%24redir') {
+        filePath = path.join(__dirname, 'htdocs', 'status.html');
+    }
+    else {
         filePath = path.join(__dirname, 'htdocs', url);
     }
 
