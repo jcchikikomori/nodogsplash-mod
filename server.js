@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => {
     if (url === '/') {
         filePath = path.join(__dirname, 'htdocs', 'splash.html');
     }
-    else if (url === '/$authaction?tok=%24tok&redir=%24redir') {
+    else if (url.startsWith('/$authaction?')) {
         filePath = path.join(__dirname, 'htdocs', 'status.html');
     }
     else {
@@ -27,6 +27,8 @@ const server = http.createServer((req, res) => {
 
             if (filePath.endsWith('.css')) {
                 contentType = 'text/css';
+            } else if (filePath.endsWith('.js')) {
+                contentType = 'text/javascript';
             } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
                 contentType = 'image/jpeg';
             }

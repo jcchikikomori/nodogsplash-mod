@@ -26,7 +26,7 @@ auth_client)
         # Further values are reserved for upload and download limits in bytes. 0 for no limit.
         echo 7200 0 0
         exit 0
-    elif [ "$USERNAME" = "guest" -a "$PASSWORD" = "lanycorsanes" ]; then
+    elif [ "$USERNAME" = "guest" -a "$PASSWORD" = "laniecorsan3s" ]; then
         # Allow Guest to access the Internet for 10 minutes (600 seconds)
         # Further values are reserved for upload and download limits in bytes. 0 for no limit.
         echo 600 0 0

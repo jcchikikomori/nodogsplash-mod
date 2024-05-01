@@ -1,11 +1,11 @@
 @import '../../node_modules/bulma/bulma';
-
+$widescreen-enabled: true;
+$fullhd-enabled: true;
 $container-max-width: 512px;
 
 html {
-    // overflow: hidden;
-
     body {
+
         .section .container {
             max-width: $container-max-width;
 
@@ -19,7 +19,33 @@ html {
             }
         }
 
-        .notification {
+        // Override
+        .section .container .modal .modal-content {
+            @media screen and (max-width: $container-max-width) {
+
+                &:not(.is-max-desktop),
+                &:not(.is-max-widescreen) {
+                    max-height: unset;
+                }
+            }
+
+            .modal-card {
+                max-width: $container-max-width;
+
+                @media screen and (max-width: $container-max-width) {
+
+                    &:not(.is-max-desktop),
+                    &:not(.is-max-widescreen) {
+                        max-width: 90vw;
+                        margin: 0 auto;
+                        max-height: unset;
+                    }
+                }
+            }
+        }
+
+        .notification,
+        .field {
             margin-bottom: 1rem;
         }
     }
