@@ -3,7 +3,7 @@
 $container-max-width: 512px;
 
 html {
-    overflow: hidden;
+    // overflow: hidden;
 
     body {
         .section .container {
@@ -17,6 +17,10 @@ html {
                     max-width: $container-max-width;
                 }
             }
+        }
+
+        .notification {
+            margin-bottom: 1rem;
         }
     }
 }
