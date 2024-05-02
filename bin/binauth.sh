@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# EXAMPLE 1
-# This is an example script for BinAuth
 # It verifies a client username and password and sets the session length.
 #
 # If BinAuth is enabled, NDS will call this script as soon as it has received an authentication request
@@ -11,31 +9,59 @@
 # 2. PreAuth
 # 3. FAS
 #
-# The username and password entered by the clent user will be included in the query string sent to NDS via html GET
+# The username and password entered by the client user will be included in the query string sent to NDS via html GET
 # For an example, see the file splash_sitewide.html
+#
+# NOTE: jq package is required!
+#
 
 METHOD="$1"
 CLIENTMAC="$2"
+
+# Path to your JSON file
+json_file="/etc/nodogsplash/users.json"
+
+# Check if the JSON file exists
+if [ ! -f "$json_file" ]; then
+    echo "JSON file not found: $json_file"
+    exit 1
+fi
 
 case "$METHOD" in
 auth_client)
     USERNAME="$3"
     PASSWORD="$4"
-    if [ "$USERNAME" = "johnc" -a "$PASSWORD" = "jcchikikomori" ]; then
-        # Allow Staff to access the Internet for the global sessiontimeout interval
-        # Further values are reserved for upload and download limits in bytes. 0 for no limit.
-        echo 7200 0 0
-        exit 0
-    elif [ "$USERNAME" = "guest" -a "$PASSWORD" = "laniecorsan3s" ]; then
-        # Allow Guest to access the Internet for 10 minutes (600 seconds)
-        # Further values are reserved for upload and download limits in bytes. 0 for no limit.
-        echo 600 0 0
-        exit 0
-    else
-        # Deny client access to the Internet.
-        exit 1
-    fi
 
+    # Check if the provided username and password match any entry in the JSON file
+    for user in $(jq -c '.[]' "$json_file"); do
+        usern=$(echo "$user" | jq -r '.username')
+        passw=$(echo "$user" | jq -r '.password')
+        # echo "$usern"
+        if [ "$USERNAME" = "$usern" ] && [ "$PASSWORD" = "$passw" ]; then
+            echo "Logging in as $USERNAME"
+            case $USERNAME in
+            johnc)
+                # Allow johnc to access the Internet for 2 hours (7200 seconds)
+                # Further values are reserved for upload and download limits in bytes. 0 for no limit.
+                echo "You are johnc"
+                echo 7200 0 0
+                ;;
+            guest)
+                # Allow Guest to access the Internet for 10 minutes (600 seconds)
+                # Further values are reserved for upload and download limits in bytes. 0 for no limit.
+                echo "You are guest"
+                echo 600 0 0
+                ;;
+            *)
+                echo "You are $USERNAME"
+                echo 1200 0 0
+                ;;
+            esac
+            exit 0
+        fi
+    done
+    # Deny client access to the Internet.
+    exit 1
     ;;
 client_auth | client_deauth | idle_deauth | timeout_deauth | ndsctl_auth | ndsctl_deauth | shutdown_deauth)
     INGOING_BYTES="$3"
