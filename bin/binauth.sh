@@ -36,27 +36,17 @@ auth_client)
     for user in $(jq -c '.[]' "$json_file"); do
         usern=$(echo "$user" | jq -r '.username')
         passw=$(echo "$user" | jq -r '.password')
-        # echo "$usern"
+        usrtimeout=$(echo "$user" | jq -r '.timeout')
+        usrupload=$(echo "$user" | jq -r '.uploadLimitBytes // 0')
+        usrdownload=$(echo "$user" | jq -r '.downloadLimitBytes // 0')
+        echo "User: $usern"
+        echo "Timeout: $usrtimeout"
+        echo "Upload Limit (bytes): $usrupload"
+        echo "Download Limit (bytes): $usrdownload"
+        echo ""
         if [ "$USERNAME" = "$usern" ] && [ "$PASSWORD" = "$passw" ]; then
-            echo "Logging in as $USERNAME"
-            case $USERNAME in
-            johnc)
-                # Allow johnc to access the Internet for 2 hours (7200 seconds)
-                # Further values are reserved for upload and download limits in bytes. 0 for no limit.
-                echo "You are johnc"
-                echo 7200 0 0
-                ;;
-            guest)
-                # Allow Guest to access the Internet for 10 minutes (600 seconds)
-                # Further values are reserved for upload and download limits in bytes. 0 for no limit.
-                echo "You are guest"
-                echo 600 0 0
-                ;;
-            *)
-                echo "You are $USERNAME"
-                echo 1200 0 0
-                ;;
-            esac
+            echo "Logged in as $usern!"
+            echo $usrtimeout $usrupload $usrdownload
             exit 0
         fi
     done

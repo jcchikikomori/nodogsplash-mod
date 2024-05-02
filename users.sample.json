@@ -1,10 +1,16 @@
 [
     {
         "username": "sample",
-        "password": "password"
+        "password": "password",
+        "timeout": 7200,
+        "uploadLimitBites": 0,
+        "downloadLimitBites": 0
     },
     {
         "username": "guest",
-        "password": "guestpassword"
+        "password": "guestpassword",
+        "timeout": 600,
+        "uploadLimitBites": 0,
+        "downloadLimitBites": 0
     }
 ]
