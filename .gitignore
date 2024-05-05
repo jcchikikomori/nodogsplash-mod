@@ -132,4 +132,6 @@ dist
 # Project-related
 htdocs/splash.*
 !htdocs/splash.html
+!htdocs/splash.js
+!htdocs/images/*
 users.json
