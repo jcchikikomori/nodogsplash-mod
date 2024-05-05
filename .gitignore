@@ -130,6 +130,8 @@ dist
 .pnp.*
 
 # Project-related
+conf/*
+!conf/nodogsplash.example
 htdocs/splash.*
 !htdocs/splash.html
 !htdocs/splash.js

@@ -32,7 +32,7 @@ config nodogsplash
   #
   #option gatewayport '2050'
 
-  option gatewayname "Corsanes Guest WiFi"
+  option gatewayname "Guest WiFi"
   option maxclients '15'
 
   # Enables debug output (0-3)
