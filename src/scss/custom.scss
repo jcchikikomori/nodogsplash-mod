@@ -1,0 +1,83 @@
+input, button {
+  width: -webkit-fill-available;
+}
+
+button[type="submit"],
+button[id="open-terms"] {
+  margin-bottom: 1em;
+}
+
+button[id="open-terms"] {
+  background-color: red;
+  color: white;
+}
+
+// Adding padding to inputs and buttons
+input, button {
+  padding: 1rem;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+// Dialog styles
+dialog {
+  &:modal {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    h2 {
+      flex: auto;
+    }
+
+    button {
+      flex: 0;
+      font-size: 2.5em;
+    }
+
+    #close-terms {
+      padding: 0;
+    }
+  }
+
+  #accept-terms {
+    border: .3rem solid red;
+    font-weight: bold;
+  }
+}
+
+// Custom styles
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.label-terms {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  margin-bottom: 2rem;
+
+  input[type="checkbox"] {
+    flex: 0;
+  }
+
+  span {
+    flex: auto;
+    margin-left: 1rem;
+  }
+}

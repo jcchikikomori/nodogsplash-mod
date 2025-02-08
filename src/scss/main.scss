@@ -1,52 +1,51 @@
-@import '../../node_modules/bulma/bulma';
-$widescreen-enabled: true;
-$fullhd-enabled: true;
+@import '../../node_modules/sakura.css/scss/sakura-dark';
+@import './custom';
+
+// Variables
 $container-max-width: 512px;
 
 html {
-    body {
+  body {
+    // Container styles
+    .section .container {
+      max-width: $container-max-width;
 
-        .section .container {
-            max-width: $container-max-width;
-
-            // Override
-            @media screen and (min-width: 1408px) {
-
-                &:not(.is-max-desktop),
-                &:not(.is-max-widescreen) {
-                    max-width: $container-max-width;
-                }
-            }
+      // Widescreen override
+      @media screen and (min-width: 1408px) {
+        &:not(.is-max-desktop),
+        &:not(.is-max-widescreen) {
+          max-width: $container-max-width;
         }
-
-        // Override
-        .section .container .modal .modal-content {
-            @media screen and (max-width: $container-max-width) {
-
-                &:not(.is-max-desktop),
-                &:not(.is-max-widescreen) {
-                    max-height: unset;
-                }
-            }
-
-            .modal-card {
-                max-width: $container-max-width;
-
-                @media screen and (max-width: $container-max-width) {
-
-                    &:not(.is-max-desktop),
-                    &:not(.is-max-widescreen) {
-                        max-width: 90vw;
-                        margin: 0 auto;
-                        max-height: unset;
-                    }
-                }
-            }
-        }
-
-        .notification,
-        .field {
-            margin-bottom: 1rem;
-        }
+      }
     }
+
+    // Modal styles
+    .section .container .modal .modal-content {
+      @media screen and (max-width: $container-max-width) {
+        &:not(.is-max-desktop),
+        &:not(.is-max-widescreen) {
+          max-height: unset;
+        }
+      }
+
+      .modal-card {
+        max-width: $container-max-width;
+
+        @media screen and (max-width: $container-max-width) {
+          &:not(.is-max-desktop),
+          &:not(.is-max-widescreen) {
+            max-width: 90vw;
+            margin: 0 auto;
+            max-height: unset;
+          }
+        }
+      }
+    }
+
+    // Utility classes
+    .notification,
+    .field {
+      margin-bottom: 1rem;
+    }
+  }
 }
