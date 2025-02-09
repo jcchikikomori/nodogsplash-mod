@@ -1,14 +1,17 @@
 var checkbox = document.querySelector('input[type="checkbox"]');
 var elSubmit = document.querySelector('button[type="submit"]');
 var macObj = { mac: '', manufacturer: 'Unspecified' };
+var userName = document.getElementById('username');
 
 if (!!elSubmit) {
   elSubmit.addEventListener('click', onclicksubmit);
 }
 
-document.getElementById('username').addEventListener('keyup', function (_e) {
-  forceLower(this);
-});
+if (!!userName) {
+  userName.addEventListener('input', function () {
+    forceLower(userName);
+  });
+}
 
 function forceLower(strInput) {
   strInput.value = strInput.value.toLowerCase();
@@ -109,13 +112,15 @@ function parseUserAgent(userAgent) {
 
 document.addEventListener('DOMContentLoaded', () => {
   var _clientMac = document.getElementById("clientmac");
+  var _clientMacAlt = document.getElementById("clientmac-alt");
+  var _clientMacAltLi = document.getElementById("clientmac-alt-li");
   var _ouiElem = document.getElementById("oui");
   var _manufElem = document.getElementById("manufacturer");
   var _manufElemAlt = document.getElementById("brand");
   var _deviceElem = document.getElementById("device");
   var _deviceElemTerms = document.getElementById("terms-device");
   var _browserElem = document.getElementById("browser");
-  var _clientMacVal = _clientMac.getAttribute("value");
+  var _clientMacVal = (!!_clientMac) ? _clientMac.getAttribute("value") : 'Unknown';
 
   parseMacAddress(_clientMacVal);
   console.log(macObj);
@@ -124,9 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!macObj.error && macObj.manufacturer !== 'Unspecified') {
     _ouiElem.hidden = false;
     _manufElem.hidden = false;
+    if (!!_clientMacAltLi) _clientMacAltLi.hidden = false;
   } else {
     _ouiElem.hidden = true;
     _manufElem.hidden = true;
+    if (!!_clientMacAltLi) _clientMacAltLi.hidden = true;
   }
 
   // Validate using user-agent from browser instead.
@@ -141,15 +148,22 @@ document.addEventListener('DOMContentLoaded', () => {
       _manufElemAlt.innerHTML = deviceInfo.manufacturer;
       if (deviceInfo.device !== 'Unknown') {
         _deviceElem.innerHTML = deviceInfo.device;
-        _deviceElemTerms.innerHTML = deviceInfo.device;
+        if (!!_deviceElemTerms) _deviceElemTerms.innerHTML = deviceInfo.device;
       }
       _browserElem.innerHTML = deviceInfo.browser;
       _ouiElem.hidden = false;
       _manufElem.hidden = false;
+      if (!!_clientMacAltLi) _clientMacAltLi.hidden = false;
     } else {
       _ouiElem.hidden = true;
       _manufElem.hidden = true;
+      if (!!_clientMacAltLi) _clientMacAltLi.hidden = true;
     }
+  }
+
+  // Other views to validate
+  if (!!_clientMacAlt && _clientMacAlt.innerHTML === '$clientmac') {
+    _clientMacAltLi.hidden = true;
   }
 
   // Checkbox manual input (on agree)

@@ -32,6 +32,8 @@ dialog {
 
   section {
     max-width: $container-max-width;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 
   header {
