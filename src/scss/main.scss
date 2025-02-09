@@ -1,9 +1,13 @@
-@import '../../node_modules/sakura.css/scss/sakura-dark';
-@import './custom';
-
 // Variables
 $container-max-width: 512px;
 
+// Import Sakura CSS
+@import '../../node_modules/sakura.css/scss/sakura-dark';
+
+// Import custom styles
+@import './custom';
+
+// Custom styles
 html {
   body {
     // Container styles

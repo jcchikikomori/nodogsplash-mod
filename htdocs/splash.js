@@ -1,44 +1,10 @@
-var elSubmits = document.querySelectorAll('.button-submit');
+var checkbox = document.querySelector('input[type="checkbox"]');
+var elSubmit = document.querySelector('button[type="submit"]');
 var macObj = { mac: '', manufacturer: 'Unspecified' };
 
-for (var i = 0, l = elSubmits.length; i < l; i++) {
-  var elSubmit = elSubmits[i];
+if (!!elSubmit) {
   elSubmit.addEventListener('click', onclicksubmit);
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  function openModal($el) {
-    $el.classList.add('is-active');
-  }
-  function closeModal($el) {
-    $el.classList.remove('is-active');
-  }
-  function closeAllModals() {
-    (document.querySelectorAll('.modal') || []).forEach(($modal) => {
-      closeModal($modal);
-    });
-  }
-  // TERMS & CONDITIONS
-  (document.querySelectorAll('.modal-trigger-terms') || []).forEach(($trigger) => {
-    const modal = $trigger.dataset.target;
-    const $target = document.getElementById(modal);
-    $trigger.addEventListener('click', () => {
-      openModal($target);
-    });
-  });
-  // CLOSE MODALS
-  (document.querySelectorAll('.modal-background, .modal-close, .modal-close-button, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
-    const $target = $close.closest('.modal');
-    $close.addEventListener('click', () => {
-      closeModal($target);
-    });
-  });
-  document.addEventListener('keydown', (event) => {
-    if (event.key === "Escape") {
-      closeAllModals();
-    }
-  });
-});
 
 document.getElementById('username').addEventListener('keyup', function (_e) {
   forceLower(this);
@@ -50,25 +16,13 @@ function forceLower(strInput) {
 
 function onclicksubmit(event) {
   // Validations
-  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  var checkedCount = Array.from(checkboxes).filter(input => input.checked).length;
-  // console.log(checkedCount);
+  var checkedCount = checkbox ? document.querySelectorAll('input[type="checkbox"]:checked').length : 0;
+  console.debug(checkedCount);
   if (checkedCount === 0) {
     alert('Please check if you agreed on Terms & Conditions');
     event.preventDefault(); // Prevent form submission
     return;
   }
-
-  // Begin loading
-  var elSubmit = event.currentTarget;
-  var classList = elSubmit.classList;
-  if (classList.contains('is-loading')) {
-    return;
-  }
-  classList.add('is-loading');
-  setTimeout(function () {
-    classList.remove('is-loading');
-  }, ~~(Math.random() * 8000));
 }
 
 function parseMacAddress(mac) {
@@ -98,17 +52,74 @@ function parseMacAddress(mac) {
     }
   } else {
     macObj = {
-      error: 'Invalid MAC address format'
+      error: 'Invalid MAC address format',
+      mac: mac.toUpperCase(),
     };
   }
 }
-window.onload = function () {
+
+function parseUserAgent(userAgent) {
+  var deviceInfo = {
+    manufacturer: "Unknown",
+    device: "Unknown",
+    browser: "Unknown"
+  };
+
+  // Regular expressions for common manufacturers and devices
+  var regexes = [
+    { regex: /Windows NT/i, manufacturer: "Microsoft", device: "Windows PC" },
+    { regex: /Samsung|SM-/i, manufacturer: "Samsung", device: "Galaxy Phone" },
+    { regex: /iPhone|iPod/i, manufacturer: "Apple", device: "iPhone" },
+    { regex: /iPad/i, manufacturer: "Apple", device: "iPad Tablet" },
+    { regex: /Huawei|HONOR/i, manufacturer: "Huawei", device: "Huawei/Honor Phone" },
+    { regex: /Oppo|CPH|PCLM/i, manufacturer: "Oppo", device: "Oppo Phone" },
+    { regex: /Vivo|V1/i, manufacturer: "Vivo", device: "Vivo Phone" },
+    { regex: /Xiaomi|MI|Redmi|MIX|POCO|M2101K/i, manufacturer: "Xiaomi", device: "Xiaomi/Redmi Phone" },
+  ];
+
+  for (var i = 0; i < regexes.length; i++) {
+    if (regexes[i].regex.test(userAgent)) {
+      deviceInfo.manufacturer = regexes[i].manufacturer;
+      if (regexes[i].device) {
+        deviceInfo.device = regexes[i].device;
+      }
+      break;
+    }
+  }
+
+  // Regular expressions for common browsers
+  var browserRegexes = [
+    { regex: /Chrome/i, browser: "Chrome" },
+    { regex: /Firefox/i, browser: "Firefox" },
+    { regex: /Safari/i, browser: "Safari" },
+    { regex: /Edge/i, browser: "Edge" },
+    { regex: /Opera/i, browser: "Opera" },
+    { regex: /MSIE|Trident/i, browser: "Internet Explorer" }
+  ];
+
+  for (var j = 0; j < browserRegexes.length; j++) {
+    if (browserRegexes[j].regex.test(userAgent)) {
+      deviceInfo.browser = browserRegexes[j].browser;
+      break;
+    }
+  }
+
+  return deviceInfo;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
   var _clientMac = document.getElementById("clientmac");
   var _ouiElem = document.getElementById("oui");
   var _manufElem = document.getElementById("manufacturer");
+  var _manufElemAlt = document.getElementById("brand");
+  var _deviceElem = document.getElementById("device");
+  var _deviceElemTerms = document.getElementById("terms-device");
+  var _browserElem = document.getElementById("browser");
   var _clientMacVal = _clientMac.getAttribute("value");
+
   parseMacAddress(_clientMacVal);
   console.log(macObj);
+
   if (_manufElem) _manufElem.innerHTML = macObj.manufacturer;
   if (!macObj.error && macObj.manufacturer !== 'Unspecified') {
     _ouiElem.hidden = false;
@@ -117,4 +128,32 @@ window.onload = function () {
     _ouiElem.hidden = true;
     _manufElem.hidden = true;
   }
-};
+
+  // Validate using user-agent from browser instead.
+  var _userAgent = navigator.userAgent;
+  console.debug(_userAgent);
+  if (!!_userAgent) {
+    var deviceInfo = parseUserAgent(_userAgent);
+    console.log(deviceInfo);
+
+    if (deviceInfo.manufacturer !== 'Unknown') {
+      _manufElem.innerHTML = deviceInfo.manufacturer;
+      _manufElemAlt.innerHTML = deviceInfo.manufacturer;
+      if (deviceInfo.device !== 'Unknown') {
+        _deviceElem.innerHTML = deviceInfo.device;
+        _deviceElemTerms.innerHTML = deviceInfo.device;
+      }
+      _browserElem.innerHTML = deviceInfo.browser;
+      _ouiElem.hidden = false;
+      _manufElem.hidden = false;
+    } else {
+      _ouiElem.hidden = true;
+      _manufElem.hidden = true;
+    }
+  }
+
+  // Checkbox manual input (on agree)
+  document.getElementById('accept-terms').addEventListener('click', function () {
+    checkbox.checked = true;
+  });
+});

@@ -30,6 +30,10 @@ dialog {
     align-items: center;
   }
 
+  section {
+    max-width: $container-max-width;
+  }
+
   header {
     display: flex;
     justify-content: space-between;
@@ -37,6 +41,7 @@ dialog {
 
     h2 {
       flex: auto;
+      margin-top: unset;
     }
 
     button {

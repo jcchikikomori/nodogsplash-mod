@@ -21,7 +21,7 @@
 					<input type="hidden" name="clientmac" value="$clientmac" id="clientmac" />
 					<div class="input-group">
 						<p>
-							<input type="text" placeholder="Enter provided Username" name="username"
+							<input id="username" type="text" placeholder="Enter provided Username" name="username"
 								value="" size="15" maxlength="15" id="username" />
 						</p>
 						<p>
@@ -40,6 +40,21 @@
 
 			<!-- Modal trigger -->
 			<button id="open-terms">View Terms & Conditions</button>
+
+			<!-- Display manufacturer -->
+			<div id="oui" hidden>
+				<p>
+					We have identified that you using an <span id="manufacturer">Unspecified</span> device.
+				</p>
+				<p>
+					<b>Manufacturer information:</b>
+					<ul>
+						<li><b>Brand:</b> <span id="brand">Unspecified</span></li>
+						<li><b>Device:</b> <span id="device">Unspecified</span></li>
+						<li><b>Browser:</b> <span id="browser">Unspecified</span></li>
+					</ul>
+				</p>
+			</div>
 		</article>
 	</main>
 
@@ -47,19 +62,21 @@
 	<dialog id="terms-modal">
 		<article>
 			<header>
-				<h2>Terms & Conditions</h2>
+				<h2>Terms & conditions</h2>
 				<button id="close-terms" aria-label="Close">&times;</button>
 			</header>
 
 			<section>
-				<h3>By connecting to this WiFi network, you agree to the following conditions:</h3>
+				<h3>By connecting your <span id="terms-device">device</span> to this WiFi network, you agree to the following conditions:</h3>
 
-				<ul>
-					<li>You shall not share the WiFi password without explicit permission from the owner.</li>
-					<li>Unauthorized sharing will result in permanent device blacklisting.</li>
+				<ol>
+					<li>You shall not <strong>share the WiFi password without explicit permission</strong> from the owner.</li>
+					<li>The owner is aware of password sharing via <strong>QR codes and password cracking software</strong> using external applications.</li>
+					<li>Unauthorized sharing will result in permanent <strong>device blacklisting (Banned)</strong>.</li>
 					<li>The owner reserves the right to monitor network activity.</li>
-					<li>Attempts to bypass these terms will result in immediate access termination.</li>
-				</ul>
+					<li>The owner has <strong>recorded</strong> the device information of those who connected to the WiFi. If you do not want your information collected, please inform the owner.</li>
+				</ol>
+				<p>Attempts to bypass these terms will result in immediate access termination.</p>
 			</section>
 
 			<footer>
@@ -68,6 +85,7 @@
 		</article>
 	</dialog>
 
+	<script src="/splash.js"></script>
 	<script type="text/javascript">
 		const modal = document.getElementById('terms-modal');
 		const openBtn = document.getElementById('open-terms');
@@ -80,6 +98,12 @@
 			openBtnAlt.addEventListener('click', () => modal.showModal());
 			closeBtn.addEventListener('click', () => modal.close());
 			acceptBtn.addEventListener('click', () => modal.close());
+
+			document.addEventListener('keydown', (event) => {
+				if (event.key === "Escape") {
+					modal.close();
+				}
+			});
 		});
 	</script>
 </body>

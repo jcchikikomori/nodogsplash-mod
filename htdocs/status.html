@@ -21,6 +21,21 @@
                 Please remember to follow the terms and conditions of this network.
             </p>
 			<button id="open-terms">View Terms & Conditions</button>
+
+			<!-- Display manufacturer -->
+			<div id="oui" hidden>
+				<p>
+					We have identified that you using an <span id="manufacturer">Unspecified</span> device.
+				</p>
+				<p>
+					<b>Manufacturer information:</b>
+					<ul>
+						<li><b>Brand:</b> <span id="brand">Unspecified</span></li>
+						<li><b>Device:</b> <span id="device">Unspecified</span></li>
+						<li><b>Browser:</b> <span id="browser">Unspecified</span></li>
+					</ul>
+				</p>
+			</div>
 		</article>
 	</main>
 
@@ -35,12 +50,14 @@
 			<section>
 				<h3>By connecting to this WiFi network, you agree to the following conditions:</h3>
 
-				<ul>
-					<li>You shall not share the WiFi password without explicit permission from the owner.</li>
-					<li>Unauthorized sharing will result in permanent device blacklisting.</li>
+				<ol>
+					<li>You shall not <strong>share the WiFi password without explicit permission</strong> from the owner.</li>
+					<li>The owner is aware of password sharing via <strong>QR codes and password cracking software</strong> using external applications.</li>
+					<li>Unauthorized sharing will result in permanent <strong>device blacklisting (Banned)</strong>.</li>
 					<li>The owner reserves the right to monitor network activity.</li>
-					<li>Attempts to bypass these terms will result in immediate access termination.</li>
-				</ul>
+					<li>The owner has <strong>recorded</strong> the device information of those who connected to the WiFi. If you do not want your information collected, please inform the owner.</li>
+				</ol>
+				<p>Attempts to bypass these terms will result in immediate access termination.</p>
 			</section>
 
 			<footer>
@@ -49,6 +66,7 @@
 		</article>
 	</dialog>
 
+	<script src="/splash.js"></script>
 	<script type="text/javascript">
 		const modal = document.getElementById('terms-modal');
 		const openBtn = document.getElementById('open-terms');
@@ -59,6 +77,12 @@
 			openBtn.addEventListener('click', () => modal.showModal());
 			closeBtn.addEventListener('click', () => modal.close());
 			acceptBtn.addEventListener('click', () => modal.close());
+
+			document.addEventListener('keydown', (event) => {
+				if (event.key === "Escape") {
+					modal.close();
+				}
+			});
 		});
 	</script>
 </body>
