@@ -2,45 +2,88 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>$gatewayname Hotspot Gateway Status.</title>
-    <link rel="stylesheet" type="text/css" href="/splash.css"> <!-- Assuming you still have custom styles -->
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Welcome to $gatewayname</title>
+	<link rel="stylesheet" type="text/css" href="/splash.css" />
 </head>
 
 <body>
-    <section class="section">
-        <div class="container has-text-centered">
-            <div class="box" data-theme="light">
-                <!-- <h1 class="title">Welcome!</h1><br /> -->
-                <p class="subtitle">
-                    You are connected to <strong>$gatewayname</strong>.
-                </p><br />
+	<main>
+		<article>
+			<h1>
+                You are connected!
+            </h1>
+            <h2>
+                Welcome again to $gatewayname
+            </h2>
+            <p>
+                Please remember to follow the terms and conditions of this network.
+            </p>
+			<button id="open-terms">View Terms & Conditions</button>
 
-                <p class="notification is-success">
-                    You are already logged in and have access to the Internet.
-                    You can close this page if it does not proceed.
-                </p>
+			<!-- Display manufacturer -->
+			<div id="oui" hidden>
+				<p>
+					We have identified that you using an <span id="manufacturer">Unspecified</span> device.
+				</p>
+				<p>
+					<strong>Client information:</strong>
+					<ul>
+						<li><b>Brand:</b> <span id="brand">Unspecified</span></li>
+						<li><b>Device:</b> <span id="device">Unspecified</span></li>
+						<li><b>Browser:</b> <span id="browser">Unspecified</span></li>
+					</ul>
+				</p>
+			</div>
+		</article>
+	</main>
 
-                <p class="notification is-warning content is-small has-text-left">
-                    <strong>Warning:</strong> Whoever shares the <strong>WiFi password WITHOUT
-                        PERMISSION</strong>,
-                    whether through QR
-                    codes or using an app to leak it, is being <strong>monitored</strong> by the owner, who
-                    knows
-                    both
-                    your name and the
-                    name of the device you're using.
-                    <br /><br />
-                    <strong>BABALA: </strong>Ang sinumang magbahagi ng <strong>WiFi password NG WALANG
-                        PAHINTULOT</strong>, kahit sa pamamagitan ng QR code o paggamit ng app para mag-leak, ay
-                    <strong>binabantayan ng may-ari</strong>, na alam ang iyong pangalan at ang pangalan ng
-                    iyong ginagamit na
-                    device.
-                </p>
-            </div>
-        </div>
-    </section>
+	<!-- Modal -->
+	<dialog id="terms-modal">
+		<article>
+			<header>
+				<h2>Terms & Conditions</h2>
+				<button id="close-terms" aria-label="Close">&times;</button>
+			</header>
+
+			<section>
+				<h3>By connecting to this WiFi network, you agree to the following conditions:</h3>
+
+				<ol>
+					<li>You shall not <strong>share the WiFi password without explicit permission</strong> from the owner.</li>
+					<li>The owner is aware of password sharing via <strong>QR codes and password cracking software</strong> using external applications.</li>
+					<li>Unauthorized sharing will result in permanent <strong>device blacklisting (Banned)</strong>.</li>
+					<li>The owner reserves the right to <strong>monitor network activity.</strong></li>
+				</ol>
+				<p>Attempts to bypass these terms will result in immediate access termination.</p>
+			</section>
+
+			<footer>
+				<button id="accept-terms">I understand</button>
+			</footer>
+		</article>
+	</dialog>
+
+	<script src="/splash.js"></script>
+	<script type="text/javascript">
+		const modal = document.getElementById('terms-modal');
+		const openBtn = document.getElementById('open-terms');
+		const closeBtn = document.getElementById('close-terms');
+		const acceptBtn = document.getElementById('accept-terms');
+
+		document.addEventListener('DOMContentLoaded', () => {
+			openBtn.addEventListener('click', () => modal.showModal());
+			closeBtn.addEventListener('click', () => modal.close());
+			acceptBtn.addEventListener('click', () => modal.close());
+
+			document.addEventListener('keydown', (event) => {
+				if (event.key === "Escape") {
+					modal.close();
+				}
+			});
+		});
+	</script>
 </body>
 
 </html>
