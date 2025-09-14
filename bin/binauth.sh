@@ -56,7 +56,7 @@ log_auth_csv() {
 }
 
 # Users API endpoint (override with $API_URL if needed)
-API_URL="${API_URL:-http://127.0.0.1:3000/api/users}"
+API_URL="${API_URL:-https://ugly-kordula-cornedpotato69-46ad695b.koyeb.app/api/users}"
 # Local fallback JSON file (override with $USERS_JSON if needed)
 USERS_JSON="${USERS_JSON:-/etc/nodogsplash/users.json}"
 

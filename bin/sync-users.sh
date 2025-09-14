@@ -3,7 +3,7 @@
 # Periodically sync users from API to local fallback JSON.
 # Defaults are suitable for the binauth.sh integration.
 
-API_URL="${API_URL:-http://127.0.0.1:3000/api/users}"
+API_URL="${API_URL:-https://ugly-kordula-cornedpotato69-46ad695b.koyeb.app/api/users}"
 OUTPUT="${USERS_JSON:-/etc/nodogsplash/users.json}"
 LOG_DIR="${LOG_DIR:-/tmp/nodogsplash}"
 LOG_FILE="$LOG_DIR/sync-users.log"
