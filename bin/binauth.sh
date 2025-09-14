@@ -117,15 +117,19 @@ auth_client)
         # Support both ...Bytes and ...Bites (UI uses Bites)
         usrupload=$(echo "$user" | jq -r '(.uploadLimitBytes // .uploadLimitBites // 0)')
         usrdownload=$(echo "$user" | jq -r '(.downloadLimitBytes // .downloadLimitBites // 0)')
-        echo "User: $usern"
-        echo "Mac Address (record): $usermac"
-        echo "Timeout: $usrtimeout"
-        echo "Upload Limit (bytes): $usrupload"
-        echo "Download Limit (bytes): $usrdownload"
-        echo ""
+        log_msg "User: $usern"
+        log_msg "User (input): $USERNAME"
+        log_msg "Pass: $passw"
+        log_msg "Pass (input): $PASSWORD"
+        log_msg "Mac Address (record): $usermac"
+        log_msg "Timeout: $usrtimeout"
+        log_msg "Upload Limit (bytes): $usrupload"
+        log_msg "Download Limit (bytes): $usrdownload"
+        log_msg "===================================="
 
         # Validation
         if [ "$USERNAME" = "$usern" ] && [ "$PASSWORD" = "$passw" ]; then
+            log_msg "User '$usern' matched!"
             # Accept if account has no MAC binding (null/blank) or matches provided MAC
             if [ -z "$usermac" ] || [ "$NORM_MAC" = "$usermac" ]; then
                 echo "Logged in as $usern (MAC validated)"

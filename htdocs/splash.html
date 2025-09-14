@@ -92,25 +92,48 @@
 			</footer>
 		</article>
 	</dialog>
+	<dialog id="loading-modal">
+		<article>
+			<header>
+				<h2>Loading...</h2>
+			</header>
+			<section>
+				<p>Please wait!</p>
+			</section>
+		</article>
+	</dialog>
 
 	<script src="/splash.js"></script>
 	<script type="text/javascript">
-		const modal = document.getElementById('terms-modal');
+		// Terms
+		const modalTerms = document.getElementById('terms-modal');
 		const openBtn = document.getElementById('open-terms');
 		const openBtnAlt = document.getElementById('open-terms-alt');
 		const closeBtn = document.getElementById('close-terms');
 		const acceptBtn = document.getElementById('accept-terms');
 
-		document.addEventListener('DOMContentLoaded', () => {
-			openBtn.addEventListener('click', () => modal.showModal());
-			openBtnAlt.addEventListener('click', () => modal.showModal());
-			closeBtn.addEventListener('click', () => modal.close());
-			acceptBtn.addEventListener('click', () => modal.close());
+		// Loading screen
+		const modalLoading = document.getElementById('loading-modal');
 
+		// Form
+		const form = document.getElementById('binauthForm');
+
+		// On load
+		document.addEventListener('DOMContentLoaded', () => {
+			// For terms
+			openBtn.addEventListener('click', () => modalTerms.showModal());
+			openBtnAlt.addEventListener('click', () => modalTerms.showModal());
+			closeBtn.addEventListener('click', () => modalTerms.close());
+			acceptBtn.addEventListener('click', () => modalTerms.close());
+			// For any modal
 			document.addEventListener('keydown', (event) => {
 				if (event.key === "Escape") {
-					modal.close();
+					modalTerms.close();
 				}
+			});
+			// For form submission
+			form.addEventListener('submit', () => {
+				modalLoading.showModal();
 			});
 		});
 	</script>
