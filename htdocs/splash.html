@@ -13,18 +13,37 @@
 		<article>
 			<h1>Welcome to $gatewayname</h1>
 
-			<!-- Error banner (populated by NDS or query param) -->
-			<div id="error-container" class="error" hidden>
-				<strong>Authentication error:</strong> <span id="error-text">$authmessage</span>
+			<!-- Info -->
+			<div>
+				<p><strong>Active users:</strong> <span>$nclients</span></p>
+			</div>
+
+			<!-- Display manufacturer -->
+			<div id="oui" hidden>
+				<p>
+					<strong>Client information:</strong>
+					<ul>
+						<li><b>Manufacturer:</b> <span id="manufacturer">Unspecified</span></li>
+						<li><b>Device:</b> <span id="brand">Unspecified</span> <span id="device">Unspecified</span></li>
+						<li><b>Browser:</b> <span id="browser">Unspecified</span></li>
+						<li id="clientmac-alt-li"><b>MAC Address:</b> <span id="clientmac-alt">$clientmac</span></li>
+					</ul>
+				</p>
 			</div>
 
 			<!-- Login -->
 			<div>
 				<form id="binauthForm" method="GET" action="$authaction">
+					<!-- Hidden fields -->
 					<input type="hidden" name="tok" value="$tok" />
 					<input type="hidden" name="redir" value="$redir" />
 					<input type="hidden" name="clientmac" value="$clientmac" id="clientmac" />
+					<input type="hidden" name="brand" id="brandInput" />
+					<input type="hidden" name="device" id="deviceInput" />
+					<input type="hidden" name="browser" id="browserInput" />
+
 					<div class="input-group">
+						<!-- User credentials -->
 						<p>
 							<input id="username" type="text" placeholder="Enter provided Username" name="username"
 								value="" size="16" maxlength="16" />
@@ -45,22 +64,6 @@
 
 			<!-- Modal trigger -->
 			<button id="open-terms">View Terms & Conditions</button>
-
-			<!-- Display manufacturer -->
-			<div id="oui" hidden>
-				<p>
-					We have identified that you using an <span id="manufacturer">Unspecified</span> device.
-				</p>
-				<p>
-					<strong>Client information:</strong>
-					<ul>
-						<li><b>Brand:</b> <span id="brand">Unspecified</span></li>
-						<li><b>Device:</b> <span id="device">Unspecified</span></li>
-						<li><b>Browser:</b> <span id="browser">Unspecified</span></li>
-						<li id="clientmac-alt-li"><b>MAC Address:</b> <span id="clientmac-alt">$clientmac</span></li>
-					</ul>
-				</p>
-			</div>
 		</article>
 	</main>
 

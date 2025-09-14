@@ -139,6 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
   var _deviceElemTerms = document.getElementById("terms-device");
   var _browserElem = document.getElementById("browser");
   var _clientMacVal = (!!_clientMac) ? _clientMac.getAttribute("value") : 'Unknown';
+  var _brandInput = document.getElementById("brandInput");
+  var _deviceInput = document.getElementById("deviceInput");
+  var _browserInput = document.getElementById("browserInput");
 
   parseMacAddress(_clientMacVal);
   console.log(macObj);
@@ -164,11 +167,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (deviceInfo.manufacturer !== 'Unknown') {
       _manufElem.innerHTML = deviceInfo.manufacturer;
       _manufElemAlt.innerHTML = deviceInfo.manufacturer;
+      _brandInput.value = deviceInfo.manufacturer;
       if (deviceInfo.device !== 'Unknown') {
         _deviceElem.innerHTML = deviceInfo.device;
+        _deviceInput.value = deviceInfo.device;
         if (!!_deviceElemTerms) _deviceElemTerms.innerHTML = deviceInfo.device;
       }
       _browserElem.innerHTML = deviceInfo.browser;
+      _browserInput.value = deviceInfo.browser;
       _ouiElem.hidden = false;
       _manufElem.hidden = false;
       if (!!_clientMacAltLi) _clientMacAltLi.hidden = false;
