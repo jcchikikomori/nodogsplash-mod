@@ -19,6 +19,15 @@ METHOD="$1"
 ARG2="$2"
 ARG3="$3"
 
+# Local logging to /tmp/nodogsplash
+LOG_DIR="/tmp/nodogsplash"
+LOG_FILE="$LOG_DIR/binauth.log"
+mkdir -p "$LOG_DIR" 2>/dev/null || true
+log_msg() {
+    # Avoid logging secrets; never log passwords
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [$METHOD] $*" >> "$LOG_FILE" 2>/dev/null || true
+}
+
 # Users API endpoint (override with $API_URL if needed)
 API_URL="${API_URL:-http://127.0.0.1:3000/api/users}"
 # Local fallback JSON file (override with $USERS_JSON if needed)
@@ -31,11 +40,13 @@ if [ $? -eq 0 ] && echo "$api_resp" | jq -e 'type == "array"' >/dev/null 2>&1; t
     users_json="$api_resp"
 else
     logger -t nds-binauth "API unavailable or invalid JSON; trying fallback file $USERS_JSON"
+    log_msg "API unavailable or invalid JSON; trying fallback file $USERS_JSON"
     if [ -f "$USERS_JSON" ]; then
         file_resp=$(cat "$USERS_JSON")
         if echo "$file_resp" | jq -e 'type == "array"' >/dev/null 2>&1; then
             users_json="$file_resp"
             logger -t nds-binauth "Using local users.json fallback"
+            log_msg "Using local users.json fallback"
         fi
     fi
 fi
@@ -43,6 +54,7 @@ fi
 if [ -z "$users_json" ]; then
     echo "Authentication error: user service and local fallback unavailable"
     logger -t nds-binauth "No users available from API or file"
+    log_msg "No users available from API or file"
     exit 1
 fi
 
@@ -66,6 +78,11 @@ auth_client)
     if [ -n "$NORM_MAC" ] && [ "$NORM_MAC" != "UNKNOWN" ]; then
         MAC_PROVIDED=1
     fi
+    if [ $MAC_PROVIDED -eq 1 ]; then
+        log_msg "MAC provided by client: $NORM_MAC"
+    else
+        log_msg "No MAC provided by client"
+    fi
 
     # If MAC provided, require it to exist in records (any user)
     if [ $MAC_PROVIDED -eq 1 ]; then
@@ -73,6 +90,7 @@ auth_client)
         if [ $? -ne 0 ]; then
             echo "Access denied: device MAC not registered"
             logger -t nds-binauth "Denied $USERNAME from $NORM_MAC: MAC not registered"
+            log_msg "Denied '$USERNAME' from $NORM_MAC: MAC not registered"
             exit 1
         fi
     fi
@@ -100,14 +118,17 @@ auth_client)
                 if [ -n "$usermac" ] && [ "$NORM_MAC" = "$usermac" ]; then
                     echo "Logged in as $usern (MAC validated)"
                     echo $usrtimeout $usrupload $usrdownload
+                    log_msg "Authenticated '$usern' with MAC $NORM_MAC, timeout=$usrtimeout up=$usrupload down=$usrdownload"
                     exit 0
                 else
                     FOUND_MATCH=1
+                    log_msg "User '$usern' password ok but MAC mismatch (client=$NORM_MAC, account=$usermac)"
                     continue
                 fi
             else
                 echo "Logged in as $usern!"
                 echo $usrtimeout $usrupload $usrdownload
+                log_msg "Authenticated '$usern' without MAC, timeout=$usrtimeout up=$usrupload down=$usrdownload"
                 exit 0
             fi
         fi
@@ -115,8 +136,10 @@ auth_client)
     if [ $MAC_PROVIDED -eq 1 ] && [ $FOUND_MATCH -eq 1 ]; then
         echo "Access denied: MAC address does not match account"
         logger -t nds-binauth "Denied $USERNAME from $NORM_MAC: MAC mismatch"
+        log_msg "Denied '$USERNAME' from $NORM_MAC: MAC mismatch"
     fi
     # Deny client access to the Internet.
+    log_msg "Authentication failed for '$USERNAME'"
     exit 1
     ;;
 client_auth | client_deauth | idle_deauth | timeout_deauth | ndsctl_auth | ndsctl_deauth | shutdown_deauth)
