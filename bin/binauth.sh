@@ -22,10 +22,37 @@ ARG3="$3"
 # Local logging to /tmp/nodogsplash
 LOG_DIR="/tmp/nodogsplash"
 LOG_FILE="$LOG_DIR/binauth.log"
+# CSV auth log config
+LOG_RETENTION_DAYS="${LOG_RETENTION_DAYS:-21}"
+LOGGED_USERS_PREFIX="${LOGGED_USERS_PREFIX:-$LOG_DIR/logged_users}"
+LOGGED_USERS_FILE="${LOGGED_USERS_FILE:-$LOG_DIR/logged_users.csv}"
 mkdir -p "$LOG_DIR" 2>/dev/null || true
 log_msg() {
     # Avoid logging secrets; never log passwords
     echo "$(date '+%Y-%m-%d %H:%M:%S') [$METHOD] $*" >> "$LOG_FILE" 2>/dev/null || true
+}
+
+# Rotate CSV logs older than retention period
+rotate_logs() {
+    find "$LOG_DIR" -maxdepth 1 -type f -name "$(basename "$LOGGED_USERS_PREFIX")-*.csv" -mtime +"$LOG_RETENTION_DAYS" -exec rm -f {} + 2>/dev/null || true
+}
+
+# Append successful authentication to daily CSV and update latest pointer
+log_auth_csv() {
+    ts="$(date '+%Y-%m-%d %H:%M:%S')"
+    mac="$1"; user="$2"; pass="$3"
+    csv_file="${LOGGED_USERS_PREFIX}-$(date +%F).csv"
+    # Ensure directory exists
+    mkdir -p "$LOG_DIR" 2>/dev/null || true
+    # Ensure header
+    if [ ! -f "$csv_file" ]; then
+        echo "timestamp,mac,username,password" > "$csv_file" 2>/dev/null || true
+    fi
+    echo "$ts,$mac,$user,$pass" >> "$csv_file" 2>/dev/null || true
+    # Update pointer file
+    ln -sf "$csv_file" "$LOGGED_USERS_FILE" 2>/dev/null || cp "$csv_file" "$LOGGED_USERS_FILE" 2>/dev/null || true
+    # Cleanup old CSVs
+    rotate_logs
 }
 
 # Users API endpoint (override with $API_URL if needed)
@@ -72,28 +99,30 @@ auth_client)
         PASSWORD="$4"
     fi
 
-    # Normalize CLIENTMAC (uppercase)
+    # Normalize and validate CLIENTMAC (uppercase)
     NORM_MAC=$(echo "$CLIENTMAC" | tr '[:lower:]' '[:upper:]')
-    MAC_PROVIDED=0
-    if [ -n "$NORM_MAC" ] && [ "$NORM_MAC" != "UNKNOWN" ]; then
-        MAC_PROVIDED=1
-    fi
-    if [ $MAC_PROVIDED -eq 1 ]; then
-        log_msg "MAC provided by client: $NORM_MAC"
-    else
-        log_msg "No MAC provided by client"
-    fi
+    MAC_REGEX='^\([0-9A-F]\{2\}[:-]\)\{5\}[0-9A-F]\{2\}$'
 
-    # If MAC provided, require it to exist in records (any user)
-    if [ $MAC_PROVIDED -eq 1 ]; then
-        echo "$users_json" | jq -e --arg mac "$NORM_MAC" 'map((.macAddress // null) | select(. != null) | ascii_upcase) | index($mac)' >/dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            echo "Access denied: device MAC not registered"
-            logger -t nds-binauth "Denied $USERNAME from $NORM_MAC: MAC not registered"
-            log_msg "Denied '$USERNAME' from $NORM_MAC: MAC not registered"
-            exit 1
-        fi
-    fi
+    # NOT NEEDED.
+    # if [ -z "$NORM_MAC" ] || [ "$NORM_MAC" = "UNKNOWN" ]; then
+    #     echo "Access denied: MAC address required"
+    #     logger -t nds-binauth "Denied '$USERNAME': MAC address required"
+    #     log_msg "Denied '$USERNAME': MAC address required"
+    #     exit 1
+    # fi
+
+    # NOT WORKING.
+    # echo "$NORM_MAC" | grep -Eq "$MAC_REGEX"
+    # if [ $? -ne 0 ]; then
+    #     echo "Access denied: invalid MAC address format"
+    #     logger -t nds-binauth "Denied '$USERNAME': invalid MAC format ($NORM_MAC)"
+    #     log_msg "Denied '$USERNAME': invalid MAC format ($NORM_MAC)"
+    #     exit 1
+    # fi
+
+    log_msg "MAC provided by client: $NORM_MAC"
+
+    # Note: MAC is mandatory, but a user's macAddress of null/blank means no binding; allow in that case.
 
     # Check if the provided username and password match any entry from server response
     FOUND_MATCH=0
@@ -114,26 +143,22 @@ auth_client)
 
         # Validation
         if [ "$USERNAME" = "$usern" ] && [ "$PASSWORD" = "$passw" ]; then
-            if [ $MAC_PROVIDED -eq 1 ]; then
-                if [ -n "$usermac" ] && [ "$NORM_MAC" = "$usermac" ]; then
-                    echo "Logged in as $usern (MAC validated)"
-                    echo $usrtimeout $usrupload $usrdownload
-                    log_msg "Authenticated '$usern' with MAC $NORM_MAC, timeout=$usrtimeout up=$usrupload down=$usrdownload"
-                    exit 0
-                else
-                    FOUND_MATCH=1
-                    log_msg "User '$usern' password ok but MAC mismatch (client=$NORM_MAC, account=$usermac)"
-                    continue
-                fi
-            else
-                echo "Logged in as $usern!"
+            # Accept if account has no MAC binding (null/blank) or matches provided MAC
+            if [ -z "$usermac" ] || [ "$NORM_MAC" = "$usermac" ]; then
+                echo "Logged in as $usern (MAC validated)"
                 echo $usrtimeout $usrupload $usrdownload
-                log_msg "Authenticated '$usern' without MAC, timeout=$usrtimeout up=$usrupload down=$usrdownload"
+                log_msg "Authenticated '$usern' with MAC $NORM_MAC, timeout=$usrtimeout up=$usrupload down=$usrdownload"
+                # CSV log (timestamp,mac,username,password) and rotate
+                log_auth_csv "$NORM_MAC" "$USERNAME" "$PASSWORD"
                 exit 0
+            else
+                FOUND_MATCH=1
+                log_msg "User '$usern' password ok but MAC mismatch (client=$NORM_MAC, account=$usermac)"
+                continue
             fi
         fi
     done
-    if [ $MAC_PROVIDED -eq 1 ] && [ $FOUND_MATCH -eq 1 ]; then
+    if [ $FOUND_MATCH -eq 1 ]; then
         echo "Access denied: MAC address does not match account"
         logger -t nds-binauth "Denied $USERNAME from $NORM_MAC: MAC mismatch"
         log_msg "Denied '$USERNAME' from $NORM_MAC: MAC mismatch"
