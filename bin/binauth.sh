@@ -103,23 +103,6 @@ auth_client)
     NORM_MAC=$(echo "$CLIENTMAC" | tr '[:lower:]' '[:upper:]')
     MAC_REGEX='^\([0-9A-F]\{2\}[:-]\)\{5\}[0-9A-F]\{2\}$'
 
-    # NOT NEEDED.
-    # if [ -z "$NORM_MAC" ] || [ "$NORM_MAC" = "UNKNOWN" ]; then
-    #     echo "Access denied: MAC address required"
-    #     logger -t nds-binauth "Denied '$USERNAME': MAC address required"
-    #     log_msg "Denied '$USERNAME': MAC address required"
-    #     exit 1
-    # fi
-
-    # NOT WORKING.
-    # echo "$NORM_MAC" | grep -Eq "$MAC_REGEX"
-    # if [ $? -ne 0 ]; then
-    #     echo "Access denied: invalid MAC address format"
-    #     logger -t nds-binauth "Denied '$USERNAME': invalid MAC format ($NORM_MAC)"
-    #     log_msg "Denied '$USERNAME': invalid MAC format ($NORM_MAC)"
-    #     exit 1
-    # fi
-
     log_msg "MAC provided by client: $NORM_MAC"
 
     # Note: MAC is mandatory, but a user's macAddress of null/blank means no binding; allow in that case.
