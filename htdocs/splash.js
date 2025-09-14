@@ -2,6 +2,8 @@ var checkbox = document.querySelector('input[type="checkbox"]');
 var elSubmit = document.querySelector('button[type="submit"]');
 var macObj = { mac: '', manufacturer: 'Unspecified' };
 var userName = document.getElementById('username');
+var errorContainer = document.getElementById('error-container');
+var errorText = document.getElementById('error-text');
 
 if (!!elSubmit) {
   elSubmit.addEventListener('click', onclicksubmit);
@@ -111,6 +113,22 @@ function parseUserAgent(userAgent) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Show error from query (?error=) or from templated $authmessage (if provided by NDS)
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var qErr = params.get('error');
+    var msg = errorText ? errorText.textContent : '';
+    var hasTemplatedMsg = !!msg && msg.indexOf('$authmessage') === -1 && msg.trim().length > 0 && msg.indexOf('$') === -1;
+    if (qErr && qErr.trim().length > 0) {
+      if (errorText) errorText.textContent = qErr;
+      if (errorContainer) errorContainer.hidden = false;
+    } else if (hasTemplatedMsg) {
+      if (errorContainer) errorContainer.hidden = false;
+    }
+  } catch (e) {
+    // ignore
+  }
+
   var _clientMac = document.getElementById("clientmac");
   var _clientMacAlt = document.getElementById("clientmac-alt");
   var _clientMacAltLi = document.getElementById("clientmac-alt-li");

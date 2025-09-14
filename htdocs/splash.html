@@ -13,6 +13,11 @@
 		<article>
 			<h1>Welcome to $gatewayname</h1>
 
+			<!-- Error banner (populated by NDS or query param) -->
+			<div id="error-container" class="error" hidden>
+				<strong>Authentication error:</strong> <span id="error-text">$authmessage</span>
+			</div>
+
 			<!-- Login -->
 			<div>
 				<form id="binauthForm" method="GET" action="$authaction">
