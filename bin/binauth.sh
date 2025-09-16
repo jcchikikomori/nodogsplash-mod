@@ -101,7 +101,6 @@ auth_client)
 
     # Normalize and validate CLIENTMAC (uppercase)
     NORM_MAC=$(echo "$CLIENTMAC" | tr '[:lower:]' '[:upper:]')
-    MAC_REGEX='^\([0-9A-F]\{2\}[:-]\)\{5\}[0-9A-F]\{2\}$'
 
     log_msg "MAC provided by client: $NORM_MAC"
 
@@ -117,15 +116,6 @@ auth_client)
         # Support both ...Bytes and ...Bites (UI uses Bites)
         usrupload=$(echo "$user" | jq -r '(.uploadLimitBytes // .uploadLimitBites // 0)')
         usrdownload=$(echo "$user" | jq -r '(.downloadLimitBytes // .downloadLimitBites // 0)')
-        log_msg "User: $usern"
-        log_msg "User (input): $USERNAME"
-        log_msg "Pass: $passw"
-        log_msg "Pass (input): $PASSWORD"
-        log_msg "Mac Address (record): $usermac"
-        log_msg "Timeout: $usrtimeout"
-        log_msg "Upload Limit (bytes): $usrupload"
-        log_msg "Download Limit (bytes): $usrdownload"
-        log_msg "===================================="
 
         # Validation
         if [ "$USERNAME" = "$usern" ] && [ "$PASSWORD" = "$passw" ]; then
