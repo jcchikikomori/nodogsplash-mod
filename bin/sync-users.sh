@@ -4,6 +4,8 @@
 # Defaults are suitable for the binauth.sh integration.
 
 API_URL="${API_URL:-https://detailed-robenia-brrakcob4ma-f2c4c4aa.koyeb.app/api/users}"
+# Optional bearer token for API auth (set via env). If not set, a placeholder is used.
+API_TOKEN="${API_TOKEN:-replaceMyTokenPlease}"
 OUTPUT="${USERS_JSON:-/etc/nodogsplash/users.json}"
 LOG_DIR="${LOG_DIR:-/tmp/nodogsplash}"
 LOG_FILE="$LOG_DIR/sync-users.log"
@@ -30,7 +32,7 @@ TMPFILE=$(mktemp /tmp/users.json.XXXXXX) || exit 1
 trap 'rm -f "$TMPFILE"' EXIT INT TERM
 
 # Fetch and validate
-RESP=$(curl -sf --connect-timeout 3 --max-time 10 "$API_URL" 2>/dev/null)
+RESP=$(curl -sf --location --connect-timeout 3 --max-time 10 -H "Authorization: Bearer $API_TOKEN $API_URL" 2>/dev/null)
 if [ $? -ne 0 ] || [ -z "$RESP" ]; then
   log "Failed to fetch from $API_URL"
   logger -t nds-sync-users "Fetch failed $API_URL"
@@ -59,4 +61,3 @@ mv -f "$TMPFILE" "$OUTPUT"
 log "Synced users to $OUTPUT from $API_URL"
 logger -t nds-sync-users "Synced users to $OUTPUT"
 exit 0
-
