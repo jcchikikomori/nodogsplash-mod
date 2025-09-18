@@ -40,15 +40,15 @@ rotate_logs() {
 # Append successful authentication to daily CSV and update latest pointer
 log_auth_csv() {
     ts="$(date '+%Y-%m-%d %H:%M:%S')"
-    mac="$1"; user="$2"; pass="$3"
+    mac="$1"; user="$2"; pass="$3"; upl="$4"; dwn="$5"
     csv_file="${LOGGED_USERS_PREFIX}-$(date +%F).csv"
     # Ensure directory exists
     mkdir -p "$LOG_DIR" 2>/dev/null || true
     # Ensure header
     if [ ! -f "$csv_file" ]; then
-        echo "timestamp,mac,username,password" > "$csv_file" 2>/dev/null || true
+        echo "timestamp,mac,username,password,up,down" > "$csv_file" 2>/dev/null || true
     fi
-    echo "$ts,$mac,$user,$pass" >> "$csv_file" 2>/dev/null || true
+    echo "$ts,$mac,$user,$pass,$upl,$dwn" >> "$csv_file" 2>/dev/null || true
     # Update pointer file
     ln -sf "$csv_file" "$LOGGED_USERS_FILE" 2>/dev/null || cp "$csv_file" "$LOGGED_USERS_FILE" 2>/dev/null || true
     # Cleanup old CSVs
@@ -128,7 +128,7 @@ auth_client)
                 echo $usrtimeout $usrupload $usrdownload
                 log_msg "Authenticated '$usern' with MAC $NORM_MAC, timeout=$usrtimeout up=$usrupload down=$usrdownload"
                 # CSV log (timestamp,mac,username,password) and rotate
-                log_auth_csv "$NORM_MAC" "$USERNAME" "$PASSWORD"
+                log_auth_csv "$NORM_MAC" "$USERNAME" "$PASSWORD" "$usrupload" "$usrdownload"
                 exit 0
             else
                 FOUND_MATCH=1
