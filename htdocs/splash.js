@@ -2,6 +2,8 @@ var checkbox = document.querySelector('input[type="checkbox"]');
 var elSubmit = document.querySelector('button[type="submit"]');
 var macObj = { mac: '', manufacturer: 'Unspecified' };
 var userName = document.getElementById('username');
+var errorContainer = document.getElementById('error-container');
+var errorText = document.getElementById('error-text');
 
 if (!!elSubmit) {
   elSubmit.addEventListener('click', onclicksubmit);
@@ -111,6 +113,22 @@ function parseUserAgent(userAgent) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Show error from query (?error=) or from templated $authmessage (if provided by NDS)
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var qErr = params.get('error');
+    var msg = errorText ? errorText.textContent : '';
+    var hasTemplatedMsg = !!msg && msg.indexOf('$authmessage') === -1 && msg.trim().length > 0 && msg.indexOf('$') === -1;
+    if (qErr && qErr.trim().length > 0) {
+      if (errorText) errorText.textContent = qErr;
+      if (errorContainer) errorContainer.hidden = false;
+    } else if (hasTemplatedMsg) {
+      if (errorContainer) errorContainer.hidden = false;
+    }
+  } catch (e) {
+    // ignore
+  }
+
   var _clientMac = document.getElementById("clientmac");
   var _clientMacAlt = document.getElementById("clientmac-alt");
   var _clientMacAltLi = document.getElementById("clientmac-alt-li");
@@ -121,6 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
   var _deviceElemTerms = document.getElementById("terms-device");
   var _browserElem = document.getElementById("browser");
   var _clientMacVal = (!!_clientMac) ? _clientMac.getAttribute("value") : 'Unknown';
+  var _brandInput = document.getElementById("brandInput");
+  var _deviceInput = document.getElementById("deviceInput");
+  var _browserInput = document.getElementById("browserInput");
 
   parseMacAddress(_clientMacVal);
   console.log(macObj);
@@ -146,11 +167,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (deviceInfo.manufacturer !== 'Unknown') {
       _manufElem.innerHTML = deviceInfo.manufacturer;
       _manufElemAlt.innerHTML = deviceInfo.manufacturer;
+      _brandInput.value = deviceInfo.manufacturer;
       if (deviceInfo.device !== 'Unknown') {
         _deviceElem.innerHTML = deviceInfo.device;
+        _deviceInput.value = deviceInfo.device;
         if (!!_deviceElemTerms) _deviceElemTerms.innerHTML = deviceInfo.device;
       }
       _browserElem.innerHTML = deviceInfo.browser;
+      _browserInput.value = deviceInfo.browser;
       _ouiElem.hidden = false;
       _manufElem.hidden = false;
       if (!!_clientMacAltLi) _clientMacAltLi.hidden = false;

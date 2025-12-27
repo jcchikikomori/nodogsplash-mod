@@ -22,6 +22,26 @@ uci set nodogsplash.@nodogsplash[0].binauth='/etc/nodogsplash/binauth.sh'
 uci commit nodogsplash
 ```
 
+## API Access (Bearer Token)
+
+The router scripts use a REST API that requires a Bearer JWT. Both `bin/binauth.sh` and `bin/sync-users.sh` now call curl as follows:
+
+```
+curl --location 'https://myadmincaptiva-project.example.com/api//users' \
+  --header 'Authorization: Bearer replaceMyTokenPlease'
+```
+
+How to configure:
+
+- Replace `replaceMyTokenPlease` with your actual JWT.
+- Or set the environment variable `API_TOKEN` before running the scripts or in your init/cron config, e.g.:
+
+```sh
+export API_TOKEN="<your JWT here>"
+```
+
+Optional: override the API endpoint via `API_URL`.
+
 ## Logging
 
 Please read the documentation provided: https://openwrt.org/docs/guide-user/base-system/log.essentials

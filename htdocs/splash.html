@@ -13,20 +13,44 @@
 		<article>
 			<h1>Welcome to $gatewayname</h1>
 
+			<!-- Info -->
+			<div>
+				<p><strong>Active users:</strong> <span>$nclients</span></p>
+			</div>
+
+			<!-- Display manufacturer -->
+			<div id="oui" hidden>
+				<p>
+					<strong>Client information:</strong>
+					<ul>
+						<li><b>Manufacturer:</b> <span id="manufacturer">Unspecified</span></li>
+						<li><b>Device:</b> <span id="brand">Unspecified</span> <span id="device">Unspecified</span></li>
+						<li><b>Browser:</b> <span id="browser">Unspecified</span></li>
+						<li id="clientmac-alt-li"><b>MAC Address:</b> <span id="clientmac-alt">$clientmac</span></li>
+					</ul>
+				</p>
+			</div>
+
 			<!-- Login -->
 			<div>
 				<form id="binauthForm" method="GET" action="$authaction">
+					<!-- Hidden fields -->
 					<input type="hidden" name="tok" value="$tok" />
 					<input type="hidden" name="redir" value="$redir" />
 					<input type="hidden" name="clientmac" value="$clientmac" id="clientmac" />
+					<input type="hidden" name="brand" id="brandInput" />
+					<input type="hidden" name="device" id="deviceInput" />
+					<input type="hidden" name="browser" id="browserInput" />
+
 					<div class="input-group">
+						<!-- User credentials -->
 						<p>
 							<input id="username" type="text" placeholder="Enter provided Username" name="username"
-								value="" size="15" maxlength="15" id="username" />
+								value="" size="16" maxlength="16" />
 						</p>
 						<p>
-							<input type="password" placeholder="Enter Password" name="password" size="15"
-								maxlength="15" />
+							<input type="password" placeholder="Enter Password" name="password" size="24"
+								maxlength="24" />
 						</p>
 					</div>
 					<label class="label-terms">
@@ -40,22 +64,6 @@
 
 			<!-- Modal trigger -->
 			<button id="open-terms">View Terms & Conditions</button>
-
-			<!-- Display manufacturer -->
-			<div id="oui" hidden>
-				<p>
-					We have identified that you using an <span id="manufacturer">Unspecified</span> device.
-				</p>
-				<p>
-					<strong>Client information:</strong>
-					<ul>
-						<li><b>Brand:</b> <span id="brand">Unspecified</span></li>
-						<li><b>Device:</b> <span id="device">Unspecified</span></li>
-						<li><b>Browser:</b> <span id="browser">Unspecified</span></li>
-						<li id="clientmac-alt-li"><b>MAC Address:</b> <span id="clientmac-alt">$clientmac</span></li>
-					</ul>
-				</p>
-			</div>
 		</article>
 	</main>
 
@@ -84,25 +92,48 @@
 			</footer>
 		</article>
 	</dialog>
+	<dialog id="loading-modal">
+		<article>
+			<header>
+				<h2>Loading...</h2>
+			</header>
+			<section>
+				<p>Please wait!</p>
+			</section>
+		</article>
+	</dialog>
 
 	<script src="/splash.js"></script>
 	<script type="text/javascript">
-		const modal = document.getElementById('terms-modal');
+		// Terms
+		const modalTerms = document.getElementById('terms-modal');
 		const openBtn = document.getElementById('open-terms');
 		const openBtnAlt = document.getElementById('open-terms-alt');
 		const closeBtn = document.getElementById('close-terms');
 		const acceptBtn = document.getElementById('accept-terms');
 
-		document.addEventListener('DOMContentLoaded', () => {
-			openBtn.addEventListener('click', () => modal.showModal());
-			openBtnAlt.addEventListener('click', () => modal.showModal());
-			closeBtn.addEventListener('click', () => modal.close());
-			acceptBtn.addEventListener('click', () => modal.close());
+		// Loading screen
+		const modalLoading = document.getElementById('loading-modal');
 
+		// Form
+		const form = document.getElementById('binauthForm');
+
+		// On load
+		document.addEventListener('DOMContentLoaded', () => {
+			// For terms
+			openBtn.addEventListener('click', () => modalTerms.showModal());
+			openBtnAlt.addEventListener('click', () => modalTerms.showModal());
+			closeBtn.addEventListener('click', () => modalTerms.close());
+			acceptBtn.addEventListener('click', () => modalTerms.close());
+			// For any modal
 			document.addEventListener('keydown', (event) => {
 				if (event.key === "Escape") {
-					modal.close();
+					modalTerms.close();
 				}
+			});
+			// For form submission
+			form.addEventListener('submit', () => {
+				modalLoading.showModal();
 			});
 		});
 	</script>
