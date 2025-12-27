@@ -3,14 +3,14 @@
         "username": "sample",
         "password": "password",
         "timeout": 7200,
-        "macAddress": "00:00:00:00:00:0a",
+        "macAddress": null,
         "uploadLimitBites": 0,
         "downloadLimitBites": 0
     },
     {
         "username": "guest",
         "password": "guestpassword",
-        "macAddress": "00:00:00:00:00:0b",
+        "macAddress": null,
         "timeout": 600,
         "uploadLimitBites": 0,
         "downloadLimitBites": 0

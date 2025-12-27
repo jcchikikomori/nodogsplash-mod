@@ -27,7 +27,7 @@ uci commit nodogsplash
 The router scripts use a REST API that requires a Bearer JWT. Both `bin/binauth.sh` and `bin/sync-users.sh` now call curl as follows:
 
 ```
-curl --location 'https://detailed-robenia-brrakcob4ma-f2c4c4aa.koyeb.app/api//users' \
+curl --location 'https://myadmincaptiva-project.example.com/api//users' \
   --header 'Authorization: Bearer replaceMyTokenPlease'
 ```
 

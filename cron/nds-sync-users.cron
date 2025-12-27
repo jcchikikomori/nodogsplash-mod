@@ -1,2 +1,2 @@
-*/15 * * * * root API_URL=https://detailed-robenia-brrakcob4ma-f2c4c4aa.koyeb.app/api/users USERS_JSON=/etc/nodogsplash/users.json LOG_DIR=/tmp/nodogsplash /etc/nodogsplash/sync-users.sh >/dev/null 2>&1
+*/15 * * * * root API_URL=https://myadmincaptiva-project.example.com/api/users USERS_JSON=/etc/nodogsplash/users.json LOG_DIR=/tmp/nodogsplash /etc/nodogsplash/sync-users.sh >/dev/null 2>&1
 

@@ -56,7 +56,7 @@ log_auth_csv() {
 }
 
 # Users API endpoint (override with $API_URL if needed)
-API_URL="${API_URL:-https://detailed-robenia-brrakcob4ma-f2c4c4aa.koyeb.app/api/users}"
+API_URL="${API_URL:-https://myadmincaptiva-project.example.com/api/users}"
 # Optional bearer token for API auth (set via env). If not set, a placeholder is used.
 API_TOKEN="${API_TOKEN:-replaceMyTokenPlease}"
 # Local fallback JSON file (override with $USERS_JSON if needed)
@@ -64,7 +64,7 @@ USERS_JSON="${USERS_JSON:-/etc/nodogsplash/users.json}"
 
 # Obtain users list: try API first, then fallback to local file
 users_json=""
-api_resp=$(curl -sf --location --connect-timeout 2 --max-time 5 -H "Authorization: Bearer $API_TOKEN $API_URL" 2>/dev/null)
+api_resp=$(curl -sf --location --connect-timeout 2 --max-time 5 -H "Authorization: Bearer $API_TOKEN" "$API_URL" 2>/dev/null)
 if [ $? -eq 0 ] && echo "$api_resp" | jq -e 'type == "array"' >/dev/null 2>&1; then
     users_json="$api_resp"
 else
